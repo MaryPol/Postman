@@ -1,0 +1,29 @@
+[{
+	"user": {
+		"url":"https://qauto.forstudy.space/api",
+		"name": "Mary",
+		"lastName": "Pol",
+		"email": "Ma3@gmail.com",
+		"password": "Qwerty12345"
+		
+	  },"cars":{
+		"increment": 1
+	  },
+	  "data":["Porsche Cayenne 1323 user1", "Audi R8 12222 user2", "Audi TT 121212 user2", "BMW 3 5000 user2", "BMW 5 50000 user1", "Fiat Ducato 100000 user1", "Fiat Panda 30003 user2", "Porsche 911 2000 user2", "Porsche Panamera 10 user1", "Ford Focus 150050 user1"]
+	
+},{
+	"user": {
+		"url":"https://qauto2.forstudy.space/api",
+		"name": "Oliver",
+		"lastName": "brown",
+		"email": "brown21@gmail.com",
+		"password": "Qwerty12345"
+		
+	  },
+	  "cars":{
+		"increment": 1
+	  },
+	  "data":["Porsche Cayenne 1323 user1", "Audi R8 12222 user2", "Audi TT 121212 user2", "BMW 3 5000 user2", "BMW 5 50000 user1", "Fiat Ducato 100000 user1", "Fiat Panda 30003 user2", "Porsche 911 2000 user2", "Porsche Panamera 10 user1", "Ford Focus 150050 user1"]
+	
+}
+]

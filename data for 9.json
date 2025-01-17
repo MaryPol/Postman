@@ -1,0 +1,28 @@
+[{
+	"data": {
+		"url":"https://qauto.forstudy.space/api",
+		"name": "Mary",
+		"lastName": "Pol",
+		"email": "Ma3@gmail.com",
+		"password": "Qwerty12345"
+		
+	  },
+	  "cars":{
+		"increment": 1
+	  }
+	
+},{
+	"data": {
+		"url":"https://qauto2.forstudy.space/api",
+		"name": "Oliver",
+		"lastName": "brown",
+		"email": "brown21@gmail.com",
+		"password": "Qwerty12345"
+		
+	  },
+	  "cars":{
+		"increment": 1
+	  }
+	
+}
+]

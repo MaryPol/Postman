@@ -1,0 +1,14 @@
+[{
+	"data": {
+		"name": "Mary",
+		"lastName": "Pol",
+		"email": "testpol5@test.com",
+		"password": "Qwerty12345"
+	  },
+	"cars": [
+        {
+            "brand": "Audi"
+        }
+    ]
+	
+}]

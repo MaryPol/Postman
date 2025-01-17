@@ -1,0 +1,403 @@
+{
+	"info": {
+		"_postman_id": "2fc55904-fba3-461d-8561-59c4a3420e5b",
+		"name": "course2_hw_3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36603177"
+	},
+	"item": [
+		{
+			"name": "CreateUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"Check status = ok\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql('ok');\r",
+							"});\r",
+							"pm.test(\"Check userId\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.userId).to.exist;\r",
+							"    pm.expect(jsonData.data.userId).to.be.above(0);\r",
+							"    pm.expect(jsonData.data.userId).to.be.a(\"number\");\r",
+							"});\r",
+							"pm.test(\"Check photoFilename\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.photoFilename).to.exist;\r",
+							"    pm.expect(jsonData.data.photoFilename).to.be.a(\"string\");\r",
+							"});\r",
+							"pm.test(\"Check distanceUnits\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.exist;\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.eql('km');\r",
+							"});\r",
+							"pm.test(\"Check currency\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.currency).to.exist;\r",
+							"    pm.expect(jsonData.data.currency).to.eql('usd');\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json().data\r",
+							"var userId = jsonData.userId\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_userId\", userId);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"c_firstName\",'Mary');\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_lastName\", 'Pol');\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_email\", 'testpolaaaabbb@test.com');\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_password\", 'Qwerty12345');\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{c_firstName}}\",\r\n  \"lastName\": \"{{c_lastName}}\",\r\n  \"email\": \"{{c_email}}\",\r\n  \"password\": \"{{c_password}}\",\r\n  \"repeatPassword\": \"{{c_password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{e_URL}}/api/auth/signup",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UserLogout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Check status = ok\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql('ok');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{e_URL}}/api/auth/logout",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UserLogIn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Check userId is \" + jsonData.data.userId, function (){\r",
+							"    pm.expect(jsonData.data.userId).to.exist;\r",
+							"    pm.expect(jsonData.data.userId).to.be.above(0);\r",
+							"    var expectedUserId = pm.collectionVariables.get('c_userId');\r",
+							"    pm.expect(jsonData.data.userId).to.equal(Number(expectedUserId));\r",
+							"});\r",
+							"pm.test(\"Check photoFilename\", function (){\r",
+							"    pm.expect(jsonData.data.photoFilename).to.exist;\r",
+							"    pm.expect(jsonData.data.photoFilename).to.be.a(\"string\");\r",
+							"});\r",
+							"pm.test(\"Check distanceUnits\", function (){\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.exist;\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.eql('km');\r",
+							"});\r",
+							"pm.test(\"Check currency\", function (){\r",
+							"    pm.expect(jsonData.data.currency).to.exist;\r",
+							"    pm.expect(jsonData.data.currency).to.eql('usd');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"{{c_email}}\",\r\n  \"password\": \"{{c_password}}\",\r\n  \"remember\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{e_URL}}/api/auth/signin",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserProfile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Check userId is \" + jsonData.data.userId, function () {\r",
+							"    pm.expect(jsonData.data.userId).to.exist;\r",
+							"    pm.expect(jsonData.data.userId).to.be.above(0);\r",
+							"    var expectedUserId = pm.collectionVariables.get('c_userId');\r",
+							"    pm.expect(jsonData.data.userId).to.equal(Number(expectedUserId));\r",
+							"});\r",
+							"pm.test(\"Check photoFilename\", function () {\r",
+							"    pm.expect(jsonData.data.photoFilename).to.exist;\r",
+							"    pm.expect(jsonData.data.photoFilename).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check name is \" + jsonData.data.name, function () {\r",
+							"    pm.expect(jsonData.data.name).to.exist;\r",
+							"    var expectedName = pm.collectionVariables.get('c_firstName');\r",
+							"    pm.expect(jsonData.data.name).to.equal(String(expectedName));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check lastName is \" + jsonData.data.lastName , function () {\r",
+							"    pm.expect(jsonData.data.lastName).to.exist;\r",
+							"    var expectedlastName = pm.collectionVariables.get('c_lastName');\r",
+							"    pm.expect(jsonData.data.lastName).to.equal(String(expectedlastName));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{e_URL}}/api/users/profile",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checkUserCars",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check status = ok\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql('ok');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check that user does't have cars\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data).to.exist;\r",
+							"    pm.expect(jsonData.data).to.be.an('array').that.is.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{e_URL}}/api/cars",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"api",
+						"cars"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"check fild status\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql('ok');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{e_URL}}/api/users",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "c_firstName",
+			"value": ""
+		},
+		{
+			"key": "c_lastName",
+			"value": ""
+		},
+		{
+			"key": "c_email",
+			"value": ""
+		},
+		{
+			"key": "c_password",
+			"value": ""
+		},
+		{
+			"key": "c_userId",
+			"value": ""
+		}
+	]
+}

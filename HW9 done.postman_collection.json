@@ -1,0 +1,966 @@
+{
+	"info": {
+		"_postman_id": "df1c7640-54ec-4308-b572-53a00f0c7fe0",
+		"name": "HW9 Copy 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "36603177"
+	},
+	"item": [
+		{
+			"name": "CreateUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//переменна я для id user\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"c_userId\", jsonData.data.userId);\r",
+							"//проверки схемы\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"Check status = ok\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql('ok');\r",
+							"});\r",
+							"pm.test(\"Check userId \"+ pm.collectionVariables.get(\"c_userId\"), function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.userId).to.exist;\r",
+							"    pm.expect(jsonData.data.userId).to.be.above(0);\r",
+							"    pm.expect(jsonData.data.userId).to.be.a(\"number\");\r",
+							"});\r",
+							"pm.test(\"Check photoFilename\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.photoFilename).to.exist;\r",
+							"    pm.expect(jsonData.data.photoFilename).to.be.a(\"string\");\r",
+							"});\r",
+							"pm.test(\"Check distanceUnits\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.exist;\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.eql('km');\r",
+							"});\r",
+							"pm.test(\"Check currency\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.currency).to.exist;\r",
+							"    pm.expect(jsonData.data.currency).to.eql('usd');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//pm.collectionVariables.set(\"URL\", \"https://qauto2.forstudy.space/api\");\r",
+							"let data = pm.iterationData.get(\"data\");\r",
+							"console.log(data.name);\r",
+							"console.log(data.lastName);\r",
+							"console.log(data.email);\r",
+							"console.log(data.password);\r",
+							"\r",
+							"pm.collectionVariables.set(\"URL\", data.url);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_firstName\", data.name);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_lastName\", data.lastName);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_email\", data.email);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_password\", data.password);\r",
+							"\r",
+							"let carsCounter = 0;\r",
+							"pm.collectionVariables.set(\"c_carsCounter\", carsCounter);\r",
+							"\r",
+							"let expensCounter = 0;\r",
+							"pm.collectionVariables.set(\"c_expensCounter\", expensCounter);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{c_firstName}}\",\r\n  \"lastName\": \"{{c_lastName}}\",\r\n  \"email\": \"{{c_email}}\",\r\n  \"password\": \"{{c_password}}\",\r\n  \"repeatPassword\": \"{{c_password}}\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/auth/signup"
+			},
+			"response": []
+		},
+		{
+			"name": "Cars models",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// проверка ответа\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"// Проверка статуса ok\r",
+							"pm.test(\"Status validation\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");\r",
+							"});\r",
+							"\r",
+							"// проверка что data массив\r",
+							"pm.test(\"Data is an array\", function () {\r",
+							"    pm.expect(jsonData.data).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"// Проверка структуры масива data\r",
+							"jsonData.data.forEach((item, index) => {\r",
+							"    pm.test(`Item ${index + 1} has valid structure`, function () {\r",
+							"        pm.expect(item).to.have.property(\"id\").that.is.a(\"number\");\r",
+							"        pm.expect(item).to.have.property(\"carBrandId\").that.is.a(\"number\");\r",
+							"        pm.expect(item).to.have.property(\"title\").that.is.a(\"string\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Шаг 1: Получаем ответ\r",
+							"var responseData = pm.response.json().data;\r",
+							"\r",
+							"// создаем переменную массив cars\r",
+							"// Создаем массив объектов с полями id и title\r",
+							"var cars = jsonData.data.map(item => {\r",
+							"    return { carmodelId: item.id, carBrandId:item.carBrandId, modelName: item.title};\r",
+							"});\r",
+							"\r",
+							"// Устанавливаем переменную коллекции с результатом\r",
+							"pm.collectionVariables.set(\"c_validCars\", cars);\r",
+							"pm.collectionVariables.set(\"c_carModels\",cars);\r",
+							"// Логируем результат для проверки\r",
+							"//console.log(pm.collectionVariables.get(\"c_validCars\"));\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/cars/models"
+			},
+			"response": []
+		},
+		{
+			"name": "Cars brands",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"// Проверка статуса 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Проверка статуса ok\r",
+							"pm.test(\"Status validation\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");\r",
+							"});\r",
+							"\r",
+							"// проверка что data массив\r",
+							"pm.test(\"Data is an array\", function () {\r",
+							"    pm.expect(jsonData.data).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"// Проверка структуры масива data\r",
+							"jsonData.data.forEach((item, index) => {\r",
+							"    pm.test(`Item ${index + 1} has valid structure`, function () {\r",
+							"        pm.expect(item).to.have.property(\"id\").that.is.a(\"number\");\r",
+							"        pm.expect(item).to.have.property(\"title\").that.is.a(\"string\");\r",
+							"        pm.expect(item).to.have.property(\"logoFilename\").that.is.a(\"string\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Шаг 2: Получаем массив cars из переменных коллекции\r",
+							"var cars = pm.collectionVariables.get(\"c_validCars\");\r",
+							"\r",
+							"// Проходим по каждому элементу в c_cars\r",
+							"cars.forEach(car => {\r",
+							"    // Ищем соответствующий бренд в ответе API\r",
+							"    const brand = jsonData.data.find(brand => brand.id === car.carBrandId);\r",
+							"\r",
+							"    // Если бренд найден, добавляем его название в объект машины\r",
+							"    if (brand) {\r",
+							"        car.brandName = brand.title;\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"// Сохраняем обновленную переменную c_cars обратно в коллекцию\r",
+							"pm.collectionVariables.set(\"c_validCars\", cars);\r",
+							"\r",
+							"// Логируем обновленные данные\r",
+							"//console.log(\"Updated c_validCars:\", JSON.stringify(cars));\r",
+							"let models = pm.collectionVariables.get(\"c_carModels\")\r",
+							"// Подсчитываем количество моделей\r",
+							"let totalModels = models.length;\r",
+							"// Создаем массив объектов brands с полями id и title\r",
+							"var brands = jsonData.data.map(item => {\r",
+							"    return { id: item.id, brandName: item.title };\r",
+							"});\r",
+							"\r",
+							"// Новый массив для результата\r",
+							"let noValidCars = [];\r",
+							"\r",
+							"// Перебираем каждый бренд\r",
+							"brands.forEach(brand => {\r",
+							"    // Для каждого бренда добавляем сочетание со всеми моделями\r",
+							"    for (let i = 1; i <= totalModels; i++) {\r",
+							"        noValidCars.push({\r",
+							"            carBrandId: brand.id,\r",
+							"            carModelId: i\r",
+							"        });\r",
+							"    }\r",
+							"});\r",
+							"// Результат\r",
+							"//console.log(\"Total cars:\", noValidCars.length); // 115\r",
+							"pm.collectionVariables.set(\"c_noValidCars\", noValidCars);\r",
+							"\r",
+							"// Процесс добавления полей из массива cars в массив noValidCars\r",
+							"noValidCars.forEach(item1 => {\r",
+							"    cars.forEach(item2 => {\r",
+							"        if (item1.carBrandId === item2.carBrandId && item1.carModelId === item2.carmodelId) {\r",
+							"            // Добавляем модель и марку из item2 в item1\r",
+							"            item1.modelName = item2.modelName;\r",
+							"            item1.brandName = item2.brandName;\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"console.log(JSON.stringify(noValidCars));\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/cars/brands"
+			},
+			"response": []
+		},
+		{
+			"name": "CreateNewCar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Извлекаем данные из ответа\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"\r",
+							"// Получаем переменные коллекции\r",
+							"const modelId = pm.collectionVariables.get(\"c_carModelId\");\r",
+							"const brandId = pm.collectionVariables.get(\"c_carBrandId\");\r",
+							"const modelName = pm.collectionVariables.get(\"c_modelName\");\r",
+							"const brandName = pm.collectionVariables.get(\"c_brandName\");\r",
+							"let carsCounter = pm.collectionVariables.get(\"c_carsCounter\");\r",
+							"\r",
+							"// Негативный сценарий: Ошибка \"Model not found\"\r",
+							"if (jsonData.status === \"error\" && jsonData.message === \"Model not found\") {\r",
+							"    pm.test(\"Машина с такими данными не может быть создана. carBrandId \" + brandId  + \", carModelId: \" + modelId, function () {\r",
+							"        pm.response.to.have.status(404); // Проверяем, что статус ответа 404\r",
+							"    });\r",
+							"    console.log(`Retrying CreateNewCar for carModelId = ${modelId}, carBrandId = ${brandId}`);\r",
+							"    pm.collectionVariables.set(\"c_carsCounter\", carsCounter + 1)\r",
+							"    pm.execution.setNextRequest(\"CreateNewCar\"); // Повторяем запрос\r",
+							"    return;\r",
+							"}\r",
+							"// Позитивный сценарий: Успешное создание машины\r",
+							"else {\r",
+							"    pm.test(\"Status code is 201\", function () {\r",
+							"        pm.response.to.have.status(201);\r",
+							"    });\r",
+							"    // Проверка статуса ответа\r",
+							"    pm.test(\"Status validation\", function () {\r",
+							"        pm.expect(jsonData.status).to.eql(\"ok\");\r",
+							"    });\r",
+							"    // Извлекаем carId из ответа и сохраняем в переменные коллекции\r",
+							"    pm.collectionVariables.set(\"c_carId\", jsonData.data.id);\r",
+							"    // Проверка id машины\r",
+							"    pm.test(\"id validation = \" + pm.collectionVariables.get(\"c_carId\"), function () {\r",
+							"        pm.expect(jsonData.data.id).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.id).to.eql(\"number\");\r",
+							"        pm.expect(jsonData.data.id).to.eql(pm.collectionVariables.get(\"c_carId\"));\r",
+							"    });\r",
+							"\r",
+							"    // Проверка carBrandId\r",
+							"    pm.test(\"carBrandId validation = \" + pm.collectionVariables.get(\"c_carBrandId\"), function () {\r",
+							"        pm.expect(jsonData.data.carBrandId).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.carBrandId).to.eql(\"number\");\r",
+							"        pm.expect(Number(jsonData.data.carBrandId)).to.eql(pm.collectionVariables.get(\"c_carBrandId\"));\r",
+							"    });\r",
+							"\r",
+							"    // Проверка carModelId\r",
+							"    pm.test(\"carModelId validation = \" + pm.collectionVariables.get(\"c_carModelId\"), function () {\r",
+							"        pm.expect(jsonData.data.carModelId).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.carModelId).to.eql(\"number\");\r",
+							"        pm.expect(Number(jsonData.data.carModelId)).to.eql(pm.collectionVariables.get(\"c_carModelId\"));\r",
+							"    });\r",
+							"\r",
+							"    // Проверка initialMileage\r",
+							"    pm.test(\"initialMileage validation = \" + pm.collectionVariables.get(\"c_mileage\"), function () {\r",
+							"        pm.expect(jsonData.data.initialMileage).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.initialMileage).to.eql(\"number\");\r",
+							"        pm.expect(jsonData.data.initialMileage).to.eql(pm.collectionVariables.get(\"c_mileage\"));\r",
+							"    });\r",
+							"\r",
+							"    // Проверка updatedMileageAt с текущей датой\r",
+							"    let today = new Date().toISOString().split('T')[0];\r",
+							"    pm.test(\"updatedMileageAt contains today's date\", function () {\r",
+							"        let updatedDate = jsonData.data.updatedMileageAt.split('T')[0];\r",
+							"        pm.expect(updatedDate).to.eql(today);\r",
+							"    });\r",
+							"\r",
+							"    pm.collectionVariables.set(\"c_updatedMileageAt\", jsonData.data.updatedMileageAt.split('T')[0]);\r",
+							"\r",
+							"    // Проверка carCreatedAt с текущей датой\r",
+							"    pm.test(\"carCreatedAt contains today's date\", function () {\r",
+							"        let createdDate = jsonData.data.carCreatedAt.split('T')[0];\r",
+							"        pm.expect(createdDate).to.eql(today);\r",
+							"    });\r",
+							"\r",
+							"    pm.collectionVariables.set(\"c_carCreatedAt\", jsonData.data.carCreatedAt.split('T')[0]);\r",
+							"\r",
+							"    // Проверка mileage\r",
+							"    pm.test(\"mileage validation = \" + pm.collectionVariables.get(\"c_mileage\"), function () {\r",
+							"        pm.expect(jsonData.data.mileage).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.mileage).to.eql(\"number\");\r",
+							"        pm.expect(jsonData.data.mileage).to.eql(pm.collectionVariables.get(\"c_mileage\"));\r",
+							"    });\r",
+							"\r",
+							"    // Проверка brand\r",
+							"    pm.test(\"brand validation = \" + pm.collectionVariables.get(\"c_brandName\"), function () {\r",
+							"        pm.expect(jsonData.data.brand).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.brand).to.eql(\"string\");\r",
+							"        pm.expect(jsonData.data.brand).to.eql(pm.collectionVariables.get(\"c_brandName\"));\r",
+							"    });\r",
+							"\r",
+							"    // Проверка model\r",
+							"    pm.test(\"model validation = \" + pm.collectionVariables.get(\"c_modelName\"), function () {\r",
+							"        pm.expect(jsonData.data.model).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.model).to.eql(\"string\");\r",
+							"        pm.expect(jsonData.data.model).to.eql(pm.collectionVariables.get(\"c_modelName\"));\r",
+							"    });\r",
+							"\r",
+							"    // Проверка logo\r",
+							"    pm.test(\"logo validation\", function () {\r",
+							"        pm.expect(jsonData.data.logo).to.exist;\r",
+							"        pm.expect(typeof jsonData.data.logo).to.eql(\"string\");\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_carsCounter\", carsCounter + 1)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//создание переменных\r",
+							"let noValidCars = pm.collectionVariables.get(\"c_noValidCars\");\r",
+							"// Получаем текущее значение счетчика (считаем, что это число)\r",
+							"let carsCounter = pm.collectionVariables.get(\"c_carsCounter\");\r",
+							"\r",
+							"// Проверяем, что счетчик находится в пределах массива там было noValidCars.length\r",
+							"if (carsCounter < noValidCars.length) {\r",
+							"    // Получаем текущий объект машиныcars\r",
+							"    let currentCar = noValidCars[carsCounter];\r",
+							"\r",
+							"    // Устанавливаем переменные для тела запроса\r",
+							"    pm.collectionVariables.set(\"c_carBrandId\", currentCar.carBrandId);\r",
+							"    pm.collectionVariables.set(\"c_carModelId\", currentCar.carModelId);\r",
+							"    pm.collectionVariables.set(\"c_modelName\", currentCar.modelName);\r",
+							"    pm.collectionVariables.set(\"c_brandName\", currentCar.brandName);\r",
+							"} else { pm.execution.setNextRequest(\"DeleteUser\");}\r",
+							"console.log(\"carBrandId \", pm.collectionVariables.get(\"c_carBrandId\"));\r",
+							"console.log(\"modelIdId \", pm.collectionVariables.get(\"c_carModelId\"));\r",
+							"console.log(\"modelName \", pm.collectionVariables.get(\"c_modelName\"));\r",
+							"console.log(\"brandName \", pm.collectionVariables.get(\"c_brandName\"));\r",
+							"\r",
+							"// создать mileage  0-999999\r",
+							"const min = 1000;\r",
+							"const max = 100000;\r",
+							"let randomMileage = Math.floor(Math.random() * (max - min + 1)) + min;\r",
+							"let initialMileage = randomMileage;\r",
+							"\r",
+							"//---------обнулить счетчик----------\r",
+							"let expensCounter = 0;\r",
+							"pm.collectionVariables.set(\"c_expensCounter\", expensCounter);\r",
+							"\r",
+							"//console.log(randomMileage);\r",
+							"//-----------------------------для дебага---------------------------------\r",
+							"pm.collectionVariables.set(\"c_mileage\", randomMileage);\r",
+							"console.log(\"mileage\", pm.collectionVariables.get(\"c_mileage\"));\r",
+							"pm.collectionVariables.set(\"c_initialMileage\", initialMileage);\r",
+							"console.log(\"initialMileage\", pm.collectionVariables.get(\"c_initialMileage\"));\r",
+							"\r",
+							"//---------------------- НАШ ЦИКЛ СОЗДАНИЯ МАШИН\r",
+							"//console.log(cars.length-1);\r",
+							"// Проверяем длину массива\r",
+							"if (carsCounter < noValidCars.length) { //0 < 115, то есть как раз до 115.\r",
+							"    // Увеличиваем счетчик после выполнения запроса\r",
+							"    console.log(\"------------carsCounter----------------: \", carsCounter);\r",
+							"    // Перезаписываем новый счетчик в коллекционную переменную\r",
+							"    pm.collectionVariables.set(\"c_carsCounter\", carsCounter);\r",
+							"    // Если еще остались машины, выполняем запрос \"CreateCarExpenses\"\r",
+							"    pm.execution.setNextRequest(\"CreateCarExpenses\");\r",
+							"} else {\r",
+							"    // Если все машины обработаны, переходим к запросу \"DeleteUser\"\r",
+							"    pm.execution.setNextRequest(\"DeleteUser\");\r",
+							"}\r",
+							"//--------------------------------------------------------\r",
+							"// ----------------------Проверяем, если в ответе содержится ошибка ---------------------------\r",
+							"if (pm.collectionVariables.get(\"URL\") === \"https://qauto2.forstudy.space/api\" && (pm.collectionVariables.get(\"c_carModelId\") === 3 || pm.collectionVariables.get(\"c_carModelId\") === 4))\r",
+							" {\r",
+							"    carsCounter++;\r",
+							"    pm.collectionVariables.set(\"c_carsCounter\", carsCounter);\r",
+							"    pm.execution.setNextRequest(\"CreateNewCar\");\r",
+							"    throw new Error (\"Машина с такими данными не создается\");\r",
+							"}\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"carBrandId\": {{c_carBrandId}},\r\n  \"carModelId\": {{c_carModelId}},\r\n  \"mileage\": {{c_mileage}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/cars"
+			},
+			"response": []
+		},
+		{
+			"name": "CreateCarExpenses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//Проверки по полям в data\r",
+							"let jsonData = pm.response.json().data;// вытаскиваем данные из респонса\r",
+							"\r",
+							"let expenses1 = pm.iterationData.get(\"expenses1\");\r",
+							"\r",
+							"// carId\r",
+							"pm.test(\"carId validation = \" + pm.collectionVariables.get(\"c_carId\"), function () {\r",
+							"    pm.expect(jsonData.carId).to.exist;\r",
+							"    pm.expect(typeof jsonData.carId).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.carId).to.eql(pm.collectionVariables.get(\"c_carId\")); \r",
+							"});\r",
+							"//reportedAt\r",
+							"// Получаем текущую дату в формате YYYY-MM-DD\r",
+							"let today = new Date().toISOString().split('T')[0];\r",
+							"\r",
+							"// Проверяем поле reportedAt\r",
+							"pm.test(\"reportedAt содержит текущую дату\", function () {\r",
+							"    let updatedDate = jsonData.reportedAt.split('T')[0];\r",
+							"    pm.expect(updatedDate).to.eql(String(today));\r",
+							"});\r",
+							"// liters\r",
+							"pm.test(\"liters validation = \" + pm.collectionVariables.get(\"c_liters\"), function () {\r",
+							"    pm.expect(jsonData.carId).to.exist;\r",
+							"    pm.expect(typeof jsonData.liters).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.liters).to.eql(pm.collectionVariables.get(\"c_liters\")); \r",
+							"});\r",
+							"//id expense\r",
+							"pm.test(\"expenses id validation = \" + jsonData.id, function () {\r",
+							"    pm.expect(jsonData.id).to.exist;\r",
+							"    pm.expect(typeof jsonData.id).to.eql(\"number\");\r",
+							"});\r",
+							"//создаем переменную id для первого \r",
+							"pm.collectionVariables.set(\"c_expensesId1\",jsonData.id);\r",
+							"\r",
+							"// mileage\r",
+							"pm.test(\"mileage validation = \" + pm.collectionVariables.get(\"c_mileage\"), function () {\r",
+							"    pm.expect(jsonData.mileage).to.exist;\r",
+							"    pm.expect(typeof jsonData.mileage).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.mileage).to.eql(pm.collectionVariables.get(\"c_mileage\")); \r",
+							"});\r",
+							"//totalCost\r",
+							"pm.test(\"totalCost validation = \" + pm.collectionVariables.get(\"c_totalCost\"), function () {\r",
+							"    pm.expect(jsonData.totalCost).to.exist;\r",
+							"    pm.expect(typeof jsonData.totalCost).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.totalCost).to.eql(pm.collectionVariables.get(\"c_totalCost\")); \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Генерируем текущую дату в формате YYYY-MM-DD\r",
+							"let reportedAt = new Date().toISOString().split('T')[0];\r",
+							"pm.collectionVariables.set(\"c_reportedAt\", reportedAt); // Сохраняем дату\r",
+							"  \r",
+							"// создаем переменную для forceMileage\r",
+							"pm.collectionVariables.set(\"c_forceMileage\", false);\r",
+							"let cars = pm.iterationData.get(\"cars\");\r",
+							"\r",
+							"\r",
+							"let mileage = pm.collectionVariables.get(\"c_mileage\");\r",
+							"let increment = cars.increment;\r",
+							"let newmileage = increment + mileage;\r",
+							"console.log(\"newmileage\", newmileage);\r",
+							"pm.collectionVariables.set(\"c_mileage\", newmileage);\r",
+							"\r",
+							"// создать liters\r",
+							"const min = 0.01;\r",
+							"const max = 9999;\r",
+							"let randomLiters = Math.floor(Math.random() * (max - min + 1)) + min;\r",
+							"\r",
+							"//console.log(randomLiters);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_liters\", randomLiters);\r",
+							"\r",
+							"// создать totalCost\r",
+							"let randomTotalCost = Math.floor(Math.random() * (max - min + 1)) + min;\r",
+							"\r",
+							"//console.log(randomTotalCost);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_totalCost\", randomTotalCost);\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"carId\": {{c_carId}},//это передается с предыдущего запроса\r\n  \"reportedAt\":\"{{c_reportedAt}}\",// создали из текущей даты\r\n  \"mileage\": {{c_mileage}}, // создаеся в pre-request\r\n  \"liters\": {{c_liters}},\r\n  \"totalCost\": {{c_totalCost}},\r\n  \"forceMileage\": {{c_forceMileage}}//создала в pre-request\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/expenses"
+			},
+			"response": []
+		},
+		{
+			"name": "CheckСarById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// достаем в переменную данные \r",
+							"var jsonData = pm.response.json();\r",
+							"// Status\r",
+							"pm.test(\"Status validation\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");\r",
+							"});\r",
+							"//  car id\r",
+							"pm.test(\"id validation = \"+ pm.collectionVariables.get(\"c_carId\"), function () {\r",
+							"    pm.expect(jsonData.data.id).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.id).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.data.id).to.eql(pm.collectionVariables.get(\"c_carId\")); \r",
+							"});\r",
+							"// carBrandId validation\r",
+							"pm.test(\"carBrandId validation = \"+ pm.collectionVariables.get(\"c_carBrandId\"), function () {\r",
+							"    pm.expect(jsonData.data.carBrandId).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.carBrandId).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.data.carBrandId).to.eql(pm.collectionVariables.get(\"c_carBrandId\")); \r",
+							"});\r",
+							"\r",
+							"// carModelId validation\r",
+							"pm.test(\"carModelId validation = \" + pm.collectionVariables.get(\"c_carModelId\"), function () {\r",
+							"    pm.expect(jsonData.data.carModelId).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.carModelId).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.data.carModelId).to.eql(pm.collectionVariables.get(\"c_carModelId\")); \r",
+							"});\r",
+							"//initialMileage\r",
+							"pm.test(\"initialMileage validation = \"+ pm.collectionVariables.get(\"c_initialMileage\"), function () {\r",
+							"    pm.expect(jsonData.data.initialMileage).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.initialMileage).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.data.initialMileage).to.eql(pm.collectionVariables.get(\"c_initialMileage\")); \r",
+							"});\r",
+							"//updatedMileageAt\r",
+							"pm.test(\"updatedMileageAt validation = \" + pm.collectionVariables.get(\"c_updatedMileageAt\"), function () {\r",
+							"    pm.expect(jsonData.data.updatedMileageAt).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.updatedMileageAt).to.eql(\"string\");\r",
+							"    pm.expect(jsonData.data.updatedMileageAt.split('T')[0]).to.eql(pm.collectionVariables.get(\"c_updatedMileageAt\")); \r",
+							"});\r",
+							"//carCreatedAt\r",
+							"pm.test(\"carCreatedAt validation = \"+ pm.collectionVariables.get(\"c_carCreatedAt\"), function () {\r",
+							"    pm.expect(jsonData.data.carCreatedAt).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.carCreatedAt).to.eql(\"string\");\r",
+							"    pm.expect(jsonData.data.carCreatedAt.split('T')[0]).to.eql(pm.collectionVariables.get(\"c_carCreatedAt\")); \r",
+							"});\r",
+							"//mileage\r",
+							"pm.test(\"mileage validation = \" + pm.collectionVariables.get(\"c_mileage\") , function () {\r",
+							"    pm.expect(jsonData.data.mileage).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.mileage).to.eql(\"number\");\r",
+							"    pm.expect(jsonData.data.mileage).to.eql(pm.collectionVariables.get(\"c_mileage\")); \r",
+							"});\r",
+							"//brand name\r",
+							"pm.test(\"brand name alidation = \" + pm.collectionVariables.get(\"c_brandName\"), function () {\r",
+							"    pm.expect(jsonData.data.brand).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.brand).to.eql(\"string\");\r",
+							"    pm.expect(jsonData.data.brand).to.eql(pm.collectionVariables.get(\"c_brandName\"));\r",
+							"});\r",
+							"// Проверка поля\r",
+							"pm.test(\"model name validation = \" + pm.collectionVariables.get(\"c_modelName\"), function () {\r",
+							"    pm.expect(jsonData.data.model).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.model).to.eql(\"string\");\r",
+							"    pm.expect(jsonData.data.model).to.eql(pm.collectionVariables.get(\"c_modelName\"));\r",
+							"});\r",
+							"//logo\r",
+							"pm.test(\"logo validation\", function () {\r",
+							"    pm.expect(jsonData.data.logo).to.exist;\r",
+							"    pm.expect(typeof jsonData.data.logo).to.eql(\"string\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"// СЛЕДУЮЩИЙ ЗАПРОС\r",
+							"\r",
+							"//создание переменных\r",
+							"let expensCounter = pm.collectionVariables.get(\"c_expensCounter\");\r",
+							"// Проверяем длину массива\r",
+							"if (expensCounter < 4) {\r",
+							"    // Увеличиваем значение счетчика\r",
+							"    expensCounter++;\r",
+							"    // Сохраняем обновленное значение в коллекционную переменную\r",
+							"    pm.collectionVariables.set(\"c_expensCounter\", expensCounter);\r",
+							"    \r",
+							"    // Выполняем запрос \"CreateCarExpenses\"\r",
+							"    pm.execution.setNextRequest(\"CreateCarExpenses\");\r",
+							"} else {\r",
+							"    // Если все машины обработаны, переходим к запросу \"CheckCarById\"\r",
+							"    pm.execution.setNextRequest(\"CreateNewCar\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/cars/{{c_carId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const testSchema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\": {\r",
+							"            \"type\": \"string\",\r",
+							"            \"enum\": [\"ok\", \"error\"]\r",
+							"        }\r",
+							"    },\r",
+							"    \"required\": [\"status\"]\r",
+							"}\r",
+							"pm.test(\"Received schema is expected\", function () {\r",
+							"    pm.response.to.have.jsonSchema(testSchema);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "{{URL}}/users"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": ""
+		},
+		{
+			"key": "c_carsCounter",
+			"value": ""
+		},
+		{
+			"key": "c_expensCounter",
+			"value": ""
+		},
+		{
+			"key": "c_carModelIter",
+			"value": ""
+		},
+		{
+			"key": "c_carBrandIter",
+			"value": ""
+		},
+		{
+			"key": "c_userId",
+			"value": ""
+		},
+		{
+			"key": "c_cars",
+			"value": ""
+		},
+		{
+			"key": "c_carsModels",
+			"value": ""
+		},
+		{
+			"key": "c_brandIds",
+			"value": ""
+		},
+		{
+			"key": "c_carsBrands",
+			"value": ""
+		},
+		{
+			"key": "c_mileage",
+			"value": ""
+		},
+		{
+			"key": "c_carBrandId",
+			"value": ""
+		},
+		{
+			"key": "c_carModelId",
+			"value": ""
+		},
+		{
+			"key": "c_currentCar",
+			"value": ""
+		},
+		{
+			"key": "c_carId",
+			"value": ""
+		},
+		{
+			"key": "c_updatedMileageAt",
+			"value": ""
+		},
+		{
+			"key": "c_carCreatedAt",
+			"value": ""
+		},
+		{
+			"key": "c_brandName",
+			"value": ""
+		},
+		{
+			"key": "c_modelName",
+			"value": ""
+		},
+		{
+			"key": "processComplete",
+			"value": ""
+		},
+		{
+			"key": "c_reportedAt",
+			"value": ""
+		},
+		{
+			"key": "c_forceMileage",
+			"value": ""
+		},
+		{
+			"key": "c_firstName",
+			"value": ""
+		},
+		{
+			"key": "c_lastName",
+			"value": ""
+		},
+		{
+			"key": "c_email",
+			"value": ""
+		},
+		{
+			"key": "c_password",
+			"value": ""
+		},
+		{
+			"key": "c_liters",
+			"value": ""
+		},
+		{
+			"key": "c_totalCost",
+			"value": ""
+		},
+		{
+			"key": "c_expensesId1",
+			"value": ""
+		},
+		{
+			"key": "c_initialMileage",
+			"value": ""
+		},
+		{
+			"key": "c_carData",
+			"value": ""
+		},
+		{
+			"key": "c_validCars",
+			"value": ""
+		},
+		{
+			"key": "c_carModels",
+			"value": ""
+		},
+		{
+			"key": "c_noValidCars",
+			"value": ""
+		}
+	]
+}

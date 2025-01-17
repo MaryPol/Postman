@@ -1,0 +1,78 @@
+[{
+	"data": {
+		"name": "Mary",
+		"lastName": "Pol",
+		"email": "testpol7@test.com",
+		"password": "Qwerty12345"
+	  },
+	"cars":[
+        {
+			"carBrandId": 2,
+			"carModelId": 7,
+			"mileage": 50
+        }
+	],
+	"expenses1": {
+		"incrementMileage": 10,
+		 "liters": 10,
+  		"totalCost": 100 
+	},
+	"expenses2": {
+		"incrementMileage": 15,
+		 "liters": 15,
+  		"totalCost": 115 
+	}
+	
+},
+{
+	"data": {
+		"name": "Peter",
+		"lastName": "Mol",
+		"email": "mol4@test.com",
+		"password": "Qwerty12345"
+	  },
+	"cars":[
+        {
+			"carBrandId": 1,
+			"carModelId": 3,
+			"mileage": 30
+        }
+	],
+	"expenses1": {
+		"incrementMileage": 10,
+		 "liters": 10,
+  		"totalCost": 100 
+	},
+	"expenses2": {
+		"incrementMileage": 15,
+		 "liters": 15,
+  		"totalCost": 115 
+	}
+	
+},
+{
+	"data": {
+		"name": "Greta",
+		"lastName": "Roll",
+		"email": "roll4@test.com",
+		"password": "Qwerty12345"
+	  },
+	"cars":[
+        {
+			"carBrandId": 4,
+			"carModelId": 16,
+			"mileage": 45
+        }
+	],
+	"expenses1": {
+		"incrementMileage": 10,
+		 "liters": 10,
+  		"totalCost": 100 
+	},
+	"expenses2": {
+		"incrementMileage": 15,
+		 "liters": 15,
+  		"totalCost": 115 
+	}
+	
+}]

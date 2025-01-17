@@ -1,0 +1,920 @@
+{
+	"info": {
+		"_postman_id": "f682368a-369e-4fe1-b401-039e896654d0",
+		"name": "Hw_4_maryna",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36603177"
+	},
+	"item": [
+		{
+			"name": "CreateUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"Check status = ok\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql('ok');\r",
+							"});\r",
+							"pm.test(\"Check userId\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.userId).to.exist;\r",
+							"    pm.expect(jsonData.data.userId).to.be.above(0);\r",
+							"    pm.expect(jsonData.data.userId).to.be.a(\"number\");\r",
+							"});\r",
+							"pm.test(\"Check photoFilename\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.photoFilename).to.exist;\r",
+							"    pm.expect(jsonData.data.photoFilename).to.be.a(\"string\");\r",
+							"});\r",
+							"pm.test(\"Check distanceUnits\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.exist;\r",
+							"    pm.expect(jsonData.data.distanceUnits).to.eql('km');\r",
+							"});\r",
+							"pm.test(\"Check currency\", function (){\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.currency).to.exist;\r",
+							"    pm.expect(jsonData.data.currency).to.eql('usd');\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json().data\r",
+							"var userId = jsonData.userId\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_userId\", userId);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"c_firstName\",'Mary');\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_lastName\", 'Pol');\r",
+							"\r",
+							"const randomNumber = Math.floor(Math.random() * 1000);\r",
+							"var email = `user${randomNumber}@gmail.com`; // Используйте обратные кавычки для шаблонных литералов\r",
+							"//console.log(email);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_email\", email);\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_password\", 'Qwerty12345');\r",
+							"\r",
+							"let car_data = {\r",
+							"    \"carBrandName\" : \"BMW\", \r",
+							"    \"carModelName\" : \"X5\",\r",
+							"    \"initialMileage\" : 5001,\r",
+							"    \"liters\": 11,\r",
+							"    \"totalCost\": 12,\r",
+							"    \"forceMileage\": false\r",
+							"};\r",
+							"pm.collectionVariables.set(\"c_car_data\", car_data);\r",
+							"\r",
+							"let expenses_data = {\r",
+							"    \"initialMileage\" : 5010,\r",
+							"    \"liters\": 30,\r",
+							"    \"totalCost\": 100,\r",
+							"};\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_expenses_data\", expenses_data);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{c_firstName}}\",\r\n  \"lastName\": \"{{c_lastName}}\",\r\n  \"email\": \"{{c_email}}\",\r\n  \"password\": \"{{c_password}}\",\r\n  \"repeatPassword\": \"{{c_password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{e_URL}}/auth/signup",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CarsBrands",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json().data;\r",
+							"var carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"for( let i =0; i <= jsonData.length-1; i++){\r",
+							"   // console.log(carData.carBrandName+\" \"+jsonData[i].title);\r",
+							"    if (jsonData[i].title === carData.carBrandName){\r",
+							"        carData.carBrandId = jsonData[i].id;\r",
+							"        break;\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_car_data\", carData);\r",
+							"\r",
+							"carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"pm.test(\"carBrandId \" + carData.carBrandId,\r",
+							" function () {\r",
+							"    pm.expect(carData.carBrandId).to.exist;\r",
+							"    pm.expect(carData.carBrandId).to.be.a(\"number\");\r",
+							"    pm.expect(carData.carBrandId).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"carData structure test\",\r",
+							" function () {\r",
+							"    pm.expect(carData).to.have.property(\"carBrandName\");\r",
+							"    pm.expect(carData).to.have.property(\"initialMileage\");\r",
+							"    pm.expect(carData).to.have.property(\"carModelName\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type is present\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"});\r",
+							"pm.test(\"Content-Length is present\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Length\", \"278\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Length value is greater than 0\", function () {\r",
+							"    pm.expect(Number(pm.response.headers.get(\"Content-Length\"))).to.be.above(0);\r",
+							"    pm.expect(parseInt(pm.response.headers.get(\"Content-Length\"))).to.be.above(0);\r",
+							"});\r",
+							"pm.test(\"Content-Length length is greater than 0\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Length\").length).to.be.above(1);\r",
+							"});\r",
+							"/*let headersToCheck = [\r",
+							"    {\r",
+							"        name: \"Server\",\r",
+							"        value: \"nginx/1.18.0 (Ubuntu)\"\r",
+							"    },\r",
+							"    {\r",
+							"        name: \"Date\",\r",
+							"        value: \"Thu, 14 Nov 2024\"\r",
+							"    },\r",
+							"    {\r",
+							"        name: \"Content-Type\",\r",
+							"        value: \"application/json; charset=utf-8\"\r",
+							"    }\r",
+							"];\r",
+							"headersToCheck.forEach(header => {\r",
+							"    pm.test(`Header ${header.name} is as expected`, function () {\r",
+							"        pm.response.to.have.header(header.name, header.value);\r",
+							"    })\r",
+							"})*/\r",
+							"\r",
+							"pm.test(\"Number of headers in request is below than 10\", function () {\r",
+							"    pm.expect(pm.request.headers.count()).to.be.below(10);\r",
+							"});\r",
+							"pm.test(\"Number of headers in response is below than 10\", function () {\r",
+							"    pm.expect(pm.response.headers.count()).to.be.below(10);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/*let fake_cookie = {key:\"wewe\",value: \"111\"};\r",
+							"pm.collectionVariables.set(\"c_fake_cookie\", fake_cookie);\r",
+							"pm.request.headers.add(fake_cookie);\r",
+							"pm.request.headers.remove(fake_cookie.key);\r",
+							"*/"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{e_URL}}/cars/brands",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"cars",
+						"brands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CarModel",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json().data;\r",
+							"var carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"for (let carModel of jsonData) {\r",
+							"    if (carModel.title === carData.carModelName && carModel.BrandId===carData.BrandId) {\r",
+							"        carData.carModelId = carModel.id;\r",
+							"        break;\r",
+							"    }\r",
+							"}\r",
+							"pm.collectionVariables.set(\"c_car_data\", carData);\r",
+							"\r",
+							"\r",
+							"carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"pm.test(\"ModelId is \" + carData.carModelId, function () {\r",
+							"    pm.expect(carData.carModelId).to.exist;\r",
+							"    pm.expect(carData.carModelId).to.be.a(\"number\");\r",
+							"    pm.expect(carData.carModelId).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Structure test\", function () {\r",
+							"    pm.expect(carData).to.have.property(\"carBrandName\");\r",
+							"    pm.expect(carData).to.have.property(\"carBrandId\");\r",
+							"    pm.expect(carData).to.have.property(\"carModelName\");\r",
+							"    pm.expect(carData).to.have.property(\"initialMileage\");\r",
+							"});    \r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{e_URL}}/cars/models",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"cars",
+						"models"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateNewCar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json().data;\r",
+							"carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"\r",
+							"pm.test(\"BrandId is \" + carData.carBrandId, function () {\r",
+							"    pm.expect(jsonData.carBrandId).to.eql(carData.carBrandId);\r",
+							"    pm.expect(jsonData.carBrandId).to.exist;\r",
+							"});\r",
+							"pm.test(\"BrandName is \" + carData.carBrandName, function () {\r",
+							"    pm.expect(jsonData.brand).to.eql(carData.carBrandName);\r",
+							"    pm.expect(jsonData.brand).to.exist;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ModelId is \" + carData.carModelId, function () {\r",
+							"    pm.expect(jsonData.carModelId).to.eql(carData.carModelId);\r",
+							"    pm.expect(jsonData.carModelId).to.exist;\r",
+							"});\r",
+							"pm.test(\"ModelName is \" + carData.carModelName, function () {\r",
+							"    pm.expect(jsonData.model).to.eql(carData.carModelName);\r",
+							"    pm.expect(jsonData.model).to.exist;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Milleage is \" + carData.initialMileage, function () {\r",
+							"    pm.expect(jsonData.mileage).to.eql(carData.initialMileage);\r",
+							"    pm.expect(jsonData.mileage).to.exist;\r",
+							"});\r",
+							"pm.test(\"Initial milleage is \" + carData.initialMileage, function () {\r",
+							"    pm.expect(jsonData.initialMileage).to.eql(carData.initialMileage);\r",
+							"    pm.expect(jsonData.initialMileage).to.exist;\r",
+							"});\r",
+							" \r",
+							"carData.carId = pm.response.json().data.id;\r",
+							"carData.mileage = pm.response.json().data.mileage;\r",
+							"carData.carCreatedAt = pm.response.json().data.carCreatedAt;\r",
+							"carData.updatedMileageAt = pm.response.json().data.updatedMileageAt;\r",
+							"pm.collectionVariables.set(\"c_car_data\", carData);\r",
+							"carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"pm.test(\"car_id exists \" + carData.carId,\r",
+							" function () {\r",
+							"    pm.expect(carData.carId).to.exist;\r",
+							"    pm.expect(carData.carId).to.be.a(\"number\");\r",
+							"    pm.expect(carData.carId).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"car_id mileage \" + carData.mileage,\r",
+							" function () {\r",
+							"    pm.expect(carData.mileage).to.exist;\r",
+							"    pm.expect(carData.mileage).to.be.a(\"number\");\r",
+							"    pm.expect(carData.mileage).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"/*\r",
+							"pm.test(\"car_id mileage \" + carData.mileage,\r",
+							" function () {\r",
+							"    pm.expect(carData.mileage).to.exist;\r",
+							"    pm.expect(carData.mileage).to.be.a(\"number\");\r",
+							"    pm.expect(carData.mileage).to.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"car_id mileage \" + carData.mileage,\r",
+							" function () {\r",
+							"    pm.expect(carData.mileage).to.exist;\r",
+							"    pm.expect(carData.mileage).to.be.a(\"number\");\r",
+							"    pm.expect(carData.mileage).to.above(0);\r",
+							"});\r",
+							"*/\r",
+							"console.log(carData);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let car_data = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"carBrandId\", car_data.carBrandId);\r",
+							"pm.collectionVariables.set(\"carModelId\", car_data.carModelId);\r",
+							"pm.collectionVariables.set(\"mileage\", car_data.initialMileage);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"carBrandId\": {{carBrandId}},\r\n  \"carModelId\": {{carModelId}},\r\n  \"mileage\": {{mileage}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{e_URL}}/cars",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"cars"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateCarExpenses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//Проверки по полям в data\r",
+							"var jsonData = pm.response.json().data;// вытаскиваем данные из респонса\r",
+							"\r",
+							"let carData = pm.collectionVariables.get(\"c_car_data\");//вытаскиваем даннные из переменной коллекции которую создали при создании юзера: let car_data\r",
+							"console.log(carData);\r",
+							"// проверка поля CarId = значению из запроса при создании машины\r",
+							"pm.test(\"CarId = \" + carData.carId, function () {\r",
+							"    pm.expect(jsonData.carId).to.exist;\r",
+							"    pm.expect(jsonData.carId).to.eql(carData.carId);\r",
+							"});\r",
+							"// проверка поля reportedAt\r",
+							"pm.test(\"Reported at \" + jsonData.reportedAt + \"               \" + carData.updatedMileageAt, function () {\r",
+							"    pm.expect(jsonData.reportedAt).to.exist;\r",
+							"    pm.expect(jsonData.reportedAt >= carData.updatedMileageAt.split(\"T\")[0]).to.be.true;\r",
+							"    //pm.expect(jsonData.reportedAt).to.be.at.least(carData.updatedMileageAt);\r",
+							"});\r",
+							"// проверка поля liters = значению из переменной при создании юзера: let car_data\r",
+							"pm.test(\"liters = \" + carData.newliters, function () {\r",
+							"    pm.expect(jsonData.liters).to.exist;\r",
+							"    pm.expect(jsonData.liters).to.eql(carData.newliters);\r",
+							"});\r",
+							"// проверка mileage и добавления в переменную\r",
+							"pm.test(\"mileage = \" + carData.newmileage, function () {\r",
+							"    pm.expect(jsonData.mileage).to.exist;\r",
+							"    pm.expect(jsonData.mileage).to.eql(carData.newmileage);\r",
+							"});\r",
+							"\r",
+							"// проверка поля id = значению из переменной при создании юзера: let car_data\r",
+							"pm.test(\"expenses id = \", function () {\r",
+							"    pm.expect(jsonData.id).to.exist;\r",
+							"    pm.expect(jsonData.id).to.be.above(0);\r",
+							"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+							"});\r",
+							"// Добавляем поле expenses_id в объект carData\r",
+							"carData.expenses_id = jsonData.id;\r",
+							"pm.collectionVariables.set(\"c_car_data\", carData); // Сохраняем обновленный объект\r",
+							"console.log(carData);\r",
+							"\r",
+							"// проверка поля totalCost = значению из переменной при создании юзера: let car_data\r",
+							"pm.test(\"totalCost = \" + carData.newtotalCost, function () {\r",
+							"    pm.expect(jsonData.totalCost).to.exist;\r",
+							"    pm.expect(jsonData.totalCost).to.eql(carData.newtotalCost);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Получаем объект c_car_data из переменной коллекции\r",
+							"let carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"\r",
+							"// Сохраняем carId в отдельную переменную коллекции\r",
+							"pm.collectionVariables.set(\"c_car_id\", carData.carId);\r",
+							"\r",
+							"// Генерируем текущую дату в формате YYYY-MM-DD\r",
+							"let reportedAt = new Date().toISOString().split('T')[0];\r",
+							"pm.collectionVariables.set(\"c_reportedAt\", reportedAt); // Сохраняем дату\r",
+							"\r",
+							"// Обновляем объект c_car_data\r",
+							"carData.reportedAt = reportedAt;\r",
+							"\r",
+							"// Рассчитываем новые значения mileage, liters и totalCost\r",
+							"carData.newmileage = carData.mileage + 2;\r",
+							"carData.newliters = carData.liters + 10;\r",
+							"carData.newtotalCost = 50;\r",
+							"\r",
+							"// Сохраняем переменные в коллекцию\r",
+							"pm.collectionVariables.set(\"c_newmileage\", carData.newmileage);\r",
+							"pm.collectionVariables.set(\"c_newliters\", carData.newliters);\r",
+							"pm.collectionVariables.set(\"c_newtotalCost\", carData.newtotalCost);\r",
+							"pm.collectionVariables.set(\"c_forceMileage\", carData.forceMileage);\r",
+							"\r",
+							"// Сохраняем обновленный объект c_car_data обратно в коллекцию\r",
+							"pm.collectionVariables.set(\"c_car_data\", carData);\r",
+							"\r",
+							"console.log(carData);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"carId\": {{c_car_id}},\r\n  \"reportedAt\":\"{{c_reportedAt}}\",\r\n  \"mileage\": {{c_newmileage}},\r\n  \"liters\": {{c_newliters}},\r\n  \"totalCost\": {{c_newtotalCost}},\r\n  \"forceMileage\": {{c_forceMileage}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{e_URL}}/expenses",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"expenses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CheckEexpensesById",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_expenses_id\", carData.expenses_id);\r",
+							"\r",
+							"console.log(carData);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json().data;\r",
+							"carData = pm.collectionVariables.get(\"c_car_data\");\r",
+							"\r",
+							"// проверка поля id = значению expenses_id из переменной при создании юзера: let car_data\r",
+							"pm.test(\"id = \" + carData.expenses_id, function () {\r",
+							"    pm.expect(jsonData.id).to.exist;\r",
+							"    pm.expect(jsonData.id).to.eql(carData.expenses_id);\r",
+							"});\r",
+							"// проверка поля CarId = значению из запроса при создании машины\r",
+							"pm.test(\"CarId = \" + carData.carId, function () {\r",
+							"    pm.expect(jsonData.carId).to.exist;\r",
+							"    pm.expect(jsonData.carId).to.eql(carData.carId);\r",
+							"});\r",
+							"// проверка поля reportedAt\r",
+							"pm.test(\"Reported at \" + jsonData.reportedAt + \"               \" + carData.updatedMileageAt, function () {\r",
+							"    pm.expect(jsonData.reportedAt).to.exist;\r",
+							"    pm.expect(jsonData.reportedAt<=carData.updatedMileageAt).to.be.true;\r",
+							"});\r",
+							"// проверка поля liters = значению из переменной при создании юзера: let car_data\r",
+							"pm.test(\"liters = \" + carData.newliters, function () {\r",
+							"    pm.expect(jsonData.liters).to.exist;\r",
+							"    pm.expect(jsonData.liters).to.eql(carData.newliters);\r",
+							"});\r",
+							"// проверка mileage экспенса и добавления в переменную\r",
+							"pm.test(\"mileage = \" + carData.newmileagemileage, function () {\r",
+							"    pm.expect(jsonData.mileage).to.exist;\r",
+							"    pm.expect(jsonData.mileage).to.eql(carData.newmileage);\r",
+							"});\r",
+							"// проверка поля totalCost = значению из переменной при создании юзера: let car_data\r",
+							"pm.test(\"totalCost = \" + carData.newtotalCost, function () {\r",
+							"    pm.expect(jsonData.totalCost).to.exist;\r",
+							"    pm.expect(jsonData.totalCost).to.eql(carData.newtotalCost);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{e_URL}}/expenses/{{c_expenses_id}}",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"expenses",
+						"{{c_expenses_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateExpenses",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Получаем объект c_car_data из переменной коллекции\r",
+							"let carData = pm.collectionVariables.get(\"c_expenses_data\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"c_new2mileage\", carData.initialMileage);\r",
+							"pm.collectionVariables.set(\"c_new2liters\", carData.liters);\r",
+							"pm.collectionVariables.set(\"c_new2totalCost\", carData.totalCost);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json().data;\r",
+							"carData = pm.collectionVariables.get(\"c_car_data\")\r",
+							"expenses_data = pm.collectionVariables.get(\"c_expenses_data\");\r",
+							"\r",
+							"// проверка поля CarId = значению из запроса при создании машины\r",
+							"pm.test(\"CarId = \" + carData.carId, function () {\r",
+							"    pm.expect(jsonData.carId).to.exist;\r",
+							"    pm.expect(jsonData.carId).to.eql(carData.carId);\r",
+							"});\r",
+							"// проверка поля CarId = значению из запроса при создании машины\r",
+							"pm.test(\"reportedAt = \" + carData.reportedAt, function () {\r",
+							"    pm.expect(jsonData.reportedAt).to.exist;\r",
+							"    pm.expect(jsonData.reportedAt).to.eql(carData.reportedAt);\r",
+							"});\r",
+							"// проверка поля liters = значению из переменной при создании юзера: let car_data\r",
+							"pm.test(\"liters = \" + expenses_data.liters, function () {\r",
+							"    pm.expect(jsonData.liters).to.exist;\r",
+							"    pm.expect(jsonData.liters).to.eql(expenses_data.liters);\r",
+							"});\r",
+							"// проверка поля id = значению expenses_id из переменной при создании юзера: let car_data\r",
+							"pm.test(\"id = \" + carData.expenses_id, function () {\r",
+							"    pm.expect(jsonData.id).to.exist;\r",
+							"    pm.expect(jsonData.id).to.eql(String(carData.expenses_id))\r",
+							"});\r",
+							"// проверка mileage экспенса и добавления в переменную\r",
+							"pm.test(\"mileage = \" + expenses_data.initialMileage, function () {\r",
+							"    pm.expect(jsonData.mileage).to.exist;\r",
+							"    pm.expect(jsonData.mileage).to.eql(expenses_data.initialMileage);\r",
+							"});\r",
+							"// проверка поля totalCost = значению из переменной при создании юзера: let car_data\r",
+							"pm.test(\"totalCost = \" + expenses_data.totalCost, function () {\r",
+							"    pm.expect(jsonData.totalCost).to.exist;\r",
+							"    pm.expect(jsonData.totalCost).to.eql(expenses_data.totalCost);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"carId\":{{c_car_id}},\n  \"reportedAt\":\"{{c_reportedAt}}\",\n  \"mileage\":{{c_new2mileage}},\n  \"liters\":{{c_new2liters}},\n  \"totalCost\":{{c_new2totalCost}},\n  \"forceMileage\": {{c_forceMileage}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{e_URL}}/expenses/{{c_expenses_id}}",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"expenses",
+						"{{c_expenses_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const testSchema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\": {\r",
+							"            \"type\": \"string\",\r",
+							"            \"enum\": [\"ok\", \"error\"]\r",
+							"        }\r",
+							"    },\r",
+							"    \"required\": [\"status\"]\r",
+							"}\r",
+							"pm.test(\"Received schema is expected\", function () {\r",
+							"    pm.response.to.have.jsonSchema(testSchema);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{e_URL}}/users",
+					"host": [
+						"{{e_URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "c_firstName",
+			"value": ""
+		},
+		{
+			"key": "c_lastName",
+			"value": ""
+		},
+		{
+			"key": "c_email",
+			"value": ""
+		},
+		{
+			"key": "c_password",
+			"value": ""
+		},
+		{
+			"key": "c_car_data",
+			"value": ""
+		},
+		{
+			"key": "c_userId",
+			"value": ""
+		},
+		{
+			"key": "carBrandId",
+			"value": ""
+		},
+		{
+			"key": "carModelId",
+			"value": ""
+		},
+		{
+			"key": "mileage",
+			"value": ""
+		},
+		{
+			"key": "c_car_id",
+			"value": ""
+		},
+		{
+			"key": "с_car_created_at",
+			"value": ""
+		},
+		{
+			"key": "с_car_mileage",
+			"value": ""
+		},
+		{
+			"key": "c_liters",
+			"value": ""
+		},
+		{
+			"key": "c_totalCost",
+			"value": ""
+		},
+		{
+			"key": "c_forceMileage",
+			"value": ""
+		},
+		{
+			"key": "c_reportedAt",
+			"value": ""
+		},
+		{
+			"key": "c_mileage",
+			"value": ""
+		},
+		{
+			"key": "c_expenses_id",
+			"value": ""
+		},
+		{
+			"key": "c_newmileage",
+			"value": ""
+		},
+		{
+			"key": "c_newliters",
+			"value": ""
+		},
+		{
+			"key": "c_newtotalCost",
+			"value": ""
+		},
+		{
+			"key": "c_expenses_data",
+			"value": ""
+		},
+		{
+			"key": "c_new2mileage",
+			"value": ""
+		},
+		{
+			"key": "c_new2liters",
+			"value": ""
+		},
+		{
+			"key": "c_new2totalCost",
+			"value": ""
+		}
+	]
+}
